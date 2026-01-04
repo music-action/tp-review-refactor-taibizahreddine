@@ -34,6 +34,18 @@ describe("TicTacToe game", () => {
       game.Play("X", 0, 0);
     }).toThrow();
   });
+    it('should declare player X as winner if it plays three in first column', () => {
+        game.Play('X', 0, 0); // Ligne 0, Col 0
+        game.Play('O', 0, 1); // Ligne 0, Col 1
+        game.Play('X', 1, 0); // Ligne 1, Col 0
+        game.Play('O', 1, 1); // Ligne 1, Col 1
+        game.Play('X', 2, 0); // Ligne 2, Col 0 (Victoire en colonne !)
+
+        const winner = game.Winner();
+
+        // Ce test va échouer car Winner() renverra ' ' au lieu de 'X'
+        expect(winner).toBe('X');
+    });
 
   it("should declare player X as winner if it plays three in top row", () => {
     game.Play("X", 0, 0);
