@@ -1,7 +1,4 @@
 pour chaque groupe participants:
 
 NOM prenom 
- - x
- - y
- - 7
-...
+ - Taibi Zahr Eddine
