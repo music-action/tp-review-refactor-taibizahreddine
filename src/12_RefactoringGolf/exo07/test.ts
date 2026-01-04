@@ -1,112 +1,110 @@
-import { Game } from "./kata";
+import { Game, Tile } from "./kata";
 
 describe("TicTacToe game", () => {
-  let game: Game;
+    let game: Game;
 
-  beforeEach(() => {
-    game = new Game();
-  });
+    beforeEach(() => {
+        game = new Game();
+    });
 
-  test("should not allow player O to play first", () => {
-    expect(() => {
-      game.Play("O", 0, 0);
-    }).toThrow();
-  });
+    // 1. Règle du premier joueur
+    test("should not allow player O to play first", () => {
+        expect(() => {
+            game.Play(new Tile(0, 0, "O"));
+        }).toThrow("Invalid first player");
+    });
 
-  it("should not allow player x to play twice in a row", () => {
-    game.Play("X", 0, 0);
-    expect(() => {
-      game.Play("X", 1, 0);
-    }).toThrow();
-  });
+    // 2. Règle de l'alternance des joueurs
+    it("should not allow player X to play twice in a row", () => {
+        game.Play(new Tile(0, 0, "X"));
+        expect(() => {
+            game.Play(new Tile(1, 0, "X"));
+        }).toThrow("Invalid next player");
+    });
 
-  it("should not allow a player to play in last played position", () => {
-    game.Play("X", 0, 0);
-    expect(() => {
-      game.Play("O", 0, 0);
-    }).toThrow();
-  });
+    // 3. Règle de la position (dernière jouée)
+    it("should not allow a player to play in last played position", () => {
+        game.Play(new Tile(0, 0, "X"));
+        expect(() => {
+            game.Play(new Tile(0, 0, "O"));
+        }).toThrow("Invalid position");
+    });
 
-  it("should not allow a player to play in any played position", () => {
-    game.Play("X", 0, 0);
-    game.Play("O", 1, 0);
-    expect(() => {
-      game.Play("X", 0, 0);
-    }).toThrow();
-  });
+    // 4. Règle de la position (n'importe quelle case déjà prise)
+    it("should not allow a player to play in any played position", () => {
+        game.Play(new Tile(0, 0, "X"));
+        game.Play(new Tile(1, 0, "O"));
+        expect(() => {
+            game.Play(new Tile(0, 0, "X"));
+        }).toThrow("Invalid position");
+    });
 
-  it("should declare player X as winner if it plays three in top row", () => {
-    game.Play("X", 0, 0);
-    game.Play("O", 1, 0);
-    game.Play("X", 0, 1);
-    game.Play("O", 1, 1);
-    game.Play("X", 0, 2);
+    // 5. Victoire X - Ligne du haut (Top Row)
+    it("should declare player X as winner if it plays three in top row", () => {
+        game.Play(new Tile(0, 0, "X"));
+        game.Play(new Tile(1, 0, "O"));
+        game.Play(new Tile(0, 1, "X"));
+        game.Play(new Tile(1, 1, "O"));
+        game.Play(new Tile(0, 2, "X"));
 
-    const winner = game.Winner();
+        expect(game.Winner()).toBe("X");
+    });
 
-    expect(winner).toBe("X");
-  });
+    // 6. Victoire O - Ligne du haut (Top Row)
+    it("should declare player O as winner if it plays three in top row", () => {
+        game.Play(new Tile(1, 0, "X"));
+        game.Play(new Tile(0, 0, "O"));
+        game.Play(new Tile(1, 1, "X"));
+        game.Play(new Tile(0, 1, "O"));
+        game.Play(new Tile(2, 2, "X"));
+        game.Play(new Tile(0, 2, "O"));
 
-  it("should declare player O as winner if it plays three in top row", () => {
-    game.Play("X", 1, 0);
-    game.Play("O", 0, 0);
-    game.Play("X", 1, 1);
-    game.Play("O", 0, 1);
-    game.Play("X", 2, 2);
-    game.Play("O", 0, 2);
+        expect(game.Winner()).toBe("O");
+    });
 
-    const winner = game.Winner();
+    // 7. Victoire X - Ligne du milieu (Middle Row)
+    it("should declare player X as winner if it plays three in middle row", () => {
+        game.Play(new Tile(1, 0, "X"));
+        game.Play(new Tile(0, 0, "O"));
+        game.Play(new Tile(1, 1, "X"));
+        game.Play(new Tile(0, 1, "O"));
+        game.Play(new Tile(1, 2, "X"));
 
-    expect(winner).toBe("O");
-  });
+        expect(game.Winner()).toBe("X");
+    });
 
-  it("should declare player X as winner if it plays three in middle row", () => {
-    game.Play("X", 1, 0);
-    game.Play("O", 0, 0);
-    game.Play("X", 1, 1);
-    game.Play("O", 0, 1);
-    game.Play("X", 1, 2);
+    // 8. Victoire O - Ligne du milieu (Middle Row)
+    it("should declare player O as winner if it plays three in middle row", () => {
+        game.Play(new Tile(0, 0, "X"));
+        game.Play(new Tile(1, 0, "O"));
+        game.Play(new Tile(2, 1, "X"));
+        game.Play(new Tile(1, 1, "O"));
+        game.Play(new Tile(2, 2, "X"));
+        game.Play(new Tile(1, 2, "O"));
 
-    const winner = game.Winner();
+        expect(game.Winner()).toBe("O");
+    });
 
-    expect(winner).toBe("X");
-  });
+    // 9. Victoire X - Ligne du bas (Bottom Row)
+    it("should declare player X as winner if it plays three in bottom row", () => {
+        game.Play(new Tile(2, 0, "X"));
+        game.Play(new Tile(0, 0, "O"));
+        game.Play(new Tile(2, 1, "X"));
+        game.Play(new Tile(0, 1, "O"));
+        game.Play(new Tile(2, 2, "X"));
 
-  it("should declare player O as winner if it plays three in middle row", () => {
-    game.Play("X", 0, 0);
-    game.Play("O", 1, 0);
-    game.Play("X", 2, 1);
-    game.Play("O", 1, 1);
-    game.Play("X", 2, 2);
-    game.Play("O", 1, 2);
+        expect(game.Winner()).toBe("X");
+    });
 
-    const winner = game.Winner();
+    // 10. Victoire O - Ligne du bas (Bottom Row)
+    it("should declare player O as winner if it plays three in bottom row", () => {
+        game.Play(new Tile(0, 0, "X"));
+        game.Play(new Tile(2, 0, "O"));
+        game.Play(new Tile(1, 1, "X"));
+        game.Play(new Tile(2, 1, "O"));
+        game.Play(new Tile(0, 1, "X"));
+        game.Play(new Tile(2, 2, "O"));
 
-    expect(winner).toBe("O");
-  });
-
-  it("should declare player X as winner if it plays three in bottom row", () => {
-    game.Play("X", 2, 0);
-    game.Play("O", 0, 0);
-    game.Play("X", 2, 1);
-    game.Play("O", 0, 1);
-    game.Play("X", 2, 2);
-
-    const winner = game.Winner();
-
-    expect(winner).toBe("X");
-  });
-
-  it("should declare player O as winner if it plays three in bottom row", () => {
-    game.Play("X", 0, 0);
-    game.Play("O", 2, 0);
-    game.Play("X", 1, 1);
-    game.Play("O", 2, 1);
-    game.Play("X", 0, 1);
-    game.Play("O", 2, 2);
-
-    const winner = game.Winner();
-
-    expect(winner).toBe("O");
-  });
+        expect(game.Winner()).toBe("O");
+    });
 });
