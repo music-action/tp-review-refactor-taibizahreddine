@@ -61,6 +61,7 @@ export class Game {
 
     if (this.isThirdRowFull() && this.isThirdRowFullWithSameSymbol()) {
       return this._board.TileAt(this.thirdRow, this.firstColumn)!.Symbol;
+
     }
 
     return this.emptyPlay;
