@@ -45,13 +45,16 @@ function hasPlayerReachedGamePoint(game: Game): boolean {
 
 // ❌ ANTI-PATTERN: Multiple negations are confusing
 function canPlayerWin_BadVersion(game: Game): boolean {
-  return !(game.player1.score < 3 && game.player2.score < 3) && 
-         !(game.player1.score === game.player2.score);
+  return (
+    !(game.player1.score < 3 && game.player2.score < 3) &&
+    !(game.player1.score === game.player2.score)
+  );
 }
 
 // ✅ SOLUTION: Rewrite with positive logic
 function canPlayerWin(game: Game): boolean {
-  const bothPlayersHaveAtLeastThreePoints = game.player1.score >= 3 && game.player2.score >= 3;
+  const bothPlayersHaveAtLeastThreePoints =
+    game.player1.score >= 3 && game.player2.score >= 3;
   const playersAreNotTied = game.player1.score !== game.player2.score;
   return bothPlayersHaveAtLeastThreePoints && playersAreNotTied;
 }
@@ -62,9 +65,11 @@ function canPlayerWin(game: Game): boolean {
 
 // ❌ ANTI-PATTERN: Confusing mix of AND/OR without clear intent
 function shouldPlayer1Win_BadVersion(game: Game): boolean {
-  return (game.player1.score > game.player2.score && game.player1.score >= 4) ||
-         (game.player1.score === game.player2.score && game.player1.score >= 3) ||
-         (game.player1.score > game.player2.score && game.player2.score >= 3);
+  return (
+    (game.player1.score > game.player2.score && game.player1.score >= 4) ||
+    (game.player1.score === game.player2.score && game.player1.score >= 3) ||
+    (game.player1.score > game.player2.score && game.player2.score >= 3)
+  );
 }
 
 // ✅ SOLUTION: Extract each condition into a named predicate
@@ -81,13 +86,17 @@ function isPlayer1Ahead(game: Game): boolean {
 }
 
 function areBothPlayersAtDeuce(game: Game): boolean {
-  return game.player1.score >= 3 && game.player2.score >= 3 && 
-         game.player1.score === game.player2.score;
+  return (
+    game.player1.score >= 3 &&
+    game.player2.score >= 3 &&
+    game.player1.score === game.player2.score
+  );
 }
 
 function shouldPlayer1Win(game: Game): boolean {
   const player1HasWon = isPlayer1AheadByAtLeastTwo(game);
-  const player1IsInAdvantage = areBothPlayersAtDeuce(game) && isPlayer1Ahead(game);
+  const player1IsInAdvantage =
+    areBothPlayersAtDeuce(game) && isPlayer1Ahead(game);
   return player1HasWon || player1IsInAdvantage;
 }
 
@@ -97,8 +106,10 @@ function shouldPlayer1Win(game: Game): boolean {
 
 // ❌ ANTI-PATTERN: Doesn't take advantage of short-circuit evaluation
 function isValidScore_BadVersion(game: Game): boolean {
-  const isPlayer1ScoreValid = game.player1.score >= 0 && game.player1.score <= 5;
-  const isPlayer2ScoreValid = game.player2.score >= 0 && game.player2.score <= 5;
+  const isPlayer1ScoreValid =
+    game.player1.score >= 0 && game.player1.score <= 5;
+  const isPlayer2ScoreValid =
+    game.player2.score >= 0 && game.player2.score <= 5;
   return isPlayer1ScoreValid && isPlayer2ScoreValid;
 }
 
@@ -118,8 +129,10 @@ function isScoreInValidRange(score: number): boolean {
 }
 
 function areAllScoresValid(game: Game): boolean {
-  return isScoreInValidRange(game.player1.score) && 
-         isScoreInValidRange(game.player2.score);
+  return (
+    isScoreInValidRange(game.player1.score) &&
+    isScoreInValidRange(game.player2.score)
+  );
 }
 
 // ============================================================================
@@ -129,13 +142,16 @@ function areAllScoresValid(game: Game): boolean {
 // ❌ ANTI-PATTERN: Magic numbers obscure business rules
 function getGameStatus_BadVersion(game: Game): string {
   if (game.player1.score >= 4 && game.player1.score - game.player2.score >= 2) {
-    return 'Player 1 wins';
+    return "Player 1 wins";
   }
-  if (game.player1.score >= 3 && game.player2.score >= 3 && 
-      game.player1.score === game.player2.score) {
-    return 'Deuce';
+  if (
+    game.player1.score >= 3 &&
+    game.player2.score >= 3 &&
+    game.player1.score === game.player2.score
+  ) {
+    return "Deuce";
   }
-  return 'Game in progress';
+  return "Game in progress";
 }
 
 // ✅ SOLUTION: Extract magic numbers into named constants
@@ -145,23 +161,25 @@ const WINNING_MARGIN = 2;
 
 function getGameStatus(game: Game): string {
   if (hasPlayer1Won(game)) {
-    return 'Player 1 wins';
+    return "Player 1 wins";
   }
   if (isDeuce(game)) {
-    return 'Deuce';
+    return "Deuce";
   }
-  return 'Game in progress';
+  return "Game in progress";
 }
 
 function hasPlayer1Won(game: Game): boolean {
   const hasReachedMinimumScore = game.player1.score >= MINIMUM_SCORE_TO_WIN;
-  const hasWinningMargin = game.player1.score - game.player2.score >= WINNING_MARGIN;
+  const hasWinningMargin =
+    game.player1.score - game.player2.score >= WINNING_MARGIN;
   return hasReachedMinimumScore && hasWinningMargin;
 }
 
 function isDeuce(game: Game): boolean {
-  const bothAtMinimumScore = game.player1.score >= MINIMUM_SCORE_FOR_DEUCE && 
-                             game.player2.score >= MINIMUM_SCORE_FOR_DEUCE;
+  const bothAtMinimumScore =
+    game.player1.score >= MINIMUM_SCORE_FOR_DEUCE &&
+    game.player2.score >= MINIMUM_SCORE_FOR_DEUCE;
   const scoresAreEqual = game.player1.score === game.player2.score;
   return bothAtMinimumScore && scoresAreEqual;
 }
@@ -172,39 +190,50 @@ function isDeuce(game: Game): boolean {
 
 // ❌ ANTI-PATTERN: Repeated score comparisons
 function getScore_BadVersion(game: Game): string {
-  if (game.player1.score >= 3 && game.player2.score >= 3 && 
-      game.player1.score === game.player2.score) {
-    return 'Deuce';
+  if (
+    game.player1.score >= 3 &&
+    game.player2.score >= 3 &&
+    game.player1.score === game.player2.score
+  ) {
+    return "Deuce";
   }
-  if (game.player1.score >= 3 && game.player2.score >= 3 && 
-      game.player1.score > game.player2.score) {
-    return 'Advantage Player 1';
+  if (
+    game.player1.score >= 3 &&
+    game.player2.score >= 3 &&
+    game.player1.score > game.player2.score
+  ) {
+    return "Advantage Player 1";
   }
-  if (game.player1.score >= 3 && game.player2.score >= 3 && 
-      game.player1.score < game.player2.score) {
-    return 'Advantage Player 2';
+  if (
+    game.player1.score >= 3 &&
+    game.player2.score >= 3 &&
+    game.player1.score < game.player2.score
+  ) {
+    return "Advantage Player 2";
   }
-  return 'Regular score';
+  return "Regular score";
 }
 
 // ✅ SOLUTION: Extract common conditions
 function isInDeuceOrAdvantageZone(game: Game): boolean {
-  return game.player1.score >= MINIMUM_SCORE_FOR_DEUCE && 
-         game.player2.score >= MINIMUM_SCORE_FOR_DEUCE;
+  return (
+    game.player1.score >= MINIMUM_SCORE_FOR_DEUCE &&
+    game.player2.score >= MINIMUM_SCORE_FOR_DEUCE
+  );
 }
 
 function getScore(game: Game): string {
   if (!isInDeuceOrAdvantageZone(game)) {
-    return 'Regular score';
+    return "Regular score";
   }
 
   if (game.player1.score === game.player2.score) {
-    return 'Deuce';
+    return "Deuce";
   }
-  
-  return game.player1.score > game.player2.score ? 
-    'Advantage Player 1' : 
-    'Advantage Player 2';
+
+  return game.player1.score > game.player2.score
+    ? "Advantage Player 1"
+    : "Advantage Player 2";
 }
 
 // ============================================================================
@@ -213,17 +242,23 @@ function getScore(game: Game): string {
 
 // ❌ ANTI-PATTERN: Mixing validation with business logic
 function calculateWinner_BadVersion(game: Game): string {
-  if (!game || !game.player1 || !game.player2 || 
-      game.player1.score < 0 || game.player2.score < 0 ||
-      game.player1.score > 5 || game.player2.score > 5) {
-    return 'Invalid game';
+  if (
+    !game ||
+    !game.player1 ||
+    !game.player2 ||
+    game.player1.score < 0 ||
+    game.player2.score < 0 ||
+    game.player1.score > 5 ||
+    game.player2.score > 5
+  ) {
+    return "Invalid game";
   }
-  
+
   if (game.player1.score >= 4 && game.player1.score - game.player2.score >= 2) {
-    return 'Player 1 wins';
+    return "Player 1 wins";
   }
-  
-  return 'Game in progress';
+
+  return "Game in progress";
 }
 
 // ✅ SOLUTION: Separate validation from business logic
@@ -236,14 +271,14 @@ function isGameValid(game: Game): boolean {
 
 function calculateWinner(game: Game): string {
   if (!isGameValid(game)) {
-    throw new Error('Invalid game state');
+    throw new Error("Invalid game state");
   }
-  
+
   if (hasPlayer1Won(game)) {
-    return 'Player 1 wins';
+    return "Player 1 wins";
   }
-  
-  return 'Game in progress';
+
+  return "Game in progress";
 }
 
 // ============================================================================
@@ -254,61 +289,66 @@ function calculateWinner(game: Game): string {
 function getGameState_BadVersion(game: Game): string {
   if (game.player1.score >= 4) {
     if (game.player1.score - game.player2.score >= 2) {
-      return 'Player 1 wins';
+      return "Player 1 wins";
     } else if (game.player1.score - game.player2.score === 1) {
-      return 'Advantage Player 1';
+      return "Advantage Player 1";
     }
   } else if (game.player2.score >= 4) {
     if (game.player2.score - game.player1.score >= 2) {
-      return 'Player 2 wins';
+      return "Player 2 wins";
     } else if (game.player2.score - game.player1.score === 1) {
-      return 'Advantage Player 2';
+      return "Advantage Player 2";
     }
   } else if (game.player1.score >= 3 && game.player2.score >= 3) {
     if (game.player1.score === game.player2.score) {
-      return 'Deuce';
+      return "Deuce";
     }
   }
-  return 'Game in progress';
+  return "Game in progress";
 }
 
 // ✅ SOLUTION: Flatten with early returns and named predicates
 function getGameState(game: Game): string {
   if (hasPlayer1Won(game)) {
-    return 'Player 1 wins';
+    return "Player 1 wins";
   }
-  
+
   if (hasPlayer2Won(game)) {
-    return 'Player 2 wins';
+    return "Player 2 wins";
   }
-  
+
   if (isDeuce(game)) {
-    return 'Deuce';
+    return "Deuce";
   }
-  
+
   if (hasPlayer1Advantage(game)) {
-    return 'Advantage Player 1';
+    return "Advantage Player 1";
   }
-  
+
   if (hasPlayer2Advantage(game)) {
-    return 'Advantage Player 2';
+    return "Advantage Player 2";
   }
-  
-  return 'Game in progress';
+
+  return "Game in progress";
 }
 
 function hasPlayer2Won(game: Game): boolean {
   const hasReachedMinimumScore = game.player2.score >= MINIMUM_SCORE_TO_WIN;
-  const hasWinningMargin = game.player2.score - game.player1.score >= WINNING_MARGIN;
+  const hasWinningMargin =
+    game.player2.score - game.player1.score >= WINNING_MARGIN;
   return hasReachedMinimumScore && hasWinningMargin;
 }
 
 function hasPlayer1Advantage(game: Game): boolean {
-  return isInDeuceOrAdvantageZone(game) && game.player1.score > game.player2.score;
+  return (
+    isInDeuceOrAdvantageZone(game) && game.player1.score > game.player2.score
+  );
 }
 
 function hasPlayer2Advantage(game: Game): boolean {
-  return isInDeuceOrAdvantageZone(game) && game.player2.score > game.player1.score;
+  return (
+    isInDeuceOrAdvantageZone(game) && game.player2.score > game.player1.score
+  );
 }
 
 // ============================================================================

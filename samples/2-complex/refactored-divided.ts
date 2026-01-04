@@ -6,7 +6,7 @@ interface User {
   name: string;
   email: string;
   age: number;
-  subscriptionLevel: 'free' | 'premium' | 'enterprise';
+  subscriptionLevel: "free" | "premium" | "enterprise";
   lastLoginDate: Date;
 }
 
@@ -21,15 +21,17 @@ interface Order {
   userId: number;
   products: Product[];
   totalAmount: number;
-  status: 'pending' | 'confirmed' | 'shipped' | 'delivered';
+  status: "pending" | "confirmed" | "shipped" | "delivered";
 }
 
 // ✅ RESPONSIBILITY 1: Discount calculation
-function calculateDiscount(subscriptionLevel: User['subscriptionLevel']): number {
-  const discountMap: Record<User['subscriptionLevel'], number> = {
+function calculateDiscount(
+  subscriptionLevel: User["subscriptionLevel"],
+): number {
+  const discountMap: Record<User["subscriptionLevel"], number> = {
     free: 0,
     premium: 10,
-    enterprise: 20
+    enterprise: 20,
   };
   return discountMap[subscriptionLevel];
 }
@@ -37,19 +39,19 @@ function calculateDiscount(subscriptionLevel: User['subscriptionLevel']): number
 // ✅ RESPONSIBILITY 2: User validation
 function validateUser(user: User): void {
   if (!user || !user.id || !user.email) {
-    throw new Error('Invalid user');
+    throw new Error("Invalid user");
   }
 }
 
 // ✅ RESPONSIBILITY 3: Product validation
 function validateProducts(products: Product[]): void {
   if (!products || products.length === 0) {
-    throw new Error('No products selected');
+    throw new Error("No products selected");
   }
 
   for (let i = 0; i < products.length; i++) {
     const product = products[i];
-    
+
     if (!product || product.id === undefined) {
       throw new Error(`Invalid product at index ${i}`);
     }
@@ -61,7 +63,10 @@ function validateProducts(products: Product[]): void {
 }
 
 // ✅ RESPONSIBILITY 4: Price calculation
-function calculateOrderTotal(products: Product[], discountPercentage: number): number {
+function calculateOrderTotal(
+  products: Product[],
+  discountPercentage: number,
+): number {
   return products.reduce((total, product) => {
     const discountedPrice = product.price * (1 - discountPercentage / 100);
     return total + discountedPrice;
@@ -69,12 +74,16 @@ function calculateOrderTotal(products: Product[], discountPercentage: number): n
 }
 
 // ✅ RESPONSIBILITY 5: Order creation
-function createOrder(user: User, products: Product[], totalAmount: number): Order {
+function createOrder(
+  user: User,
+  products: Product[],
+  totalAmount: number,
+): Order {
   return {
     userId: user.id,
     products: products,
     totalAmount: totalAmount,
-    status: 'pending'
+    status: "pending",
   };
 }
 
@@ -82,7 +91,7 @@ function createOrder(user: User, products: Product[], totalAmount: number): Orde
 function sendEmailNotification(user: User, order: Order): void {
   const emailSubject = `Order Confirmation #${Math.random()}`;
   const emailBody = `Dear ${user.name},\n\nYour order has been received.\nTotal: $${order.totalAmount.toFixed(2)}\n\nThank you for your purchase!`;
-  
+
   console.log(`[EMAIL] To: ${user.email}`);
   console.log(`[EMAIL] Subject: ${emailSubject}`);
   console.log(`[EMAIL] Body: ${emailBody}`);
@@ -90,7 +99,10 @@ function sendEmailNotification(user: User, order: Order): void {
 
 // ✅ RESPONSIBILITY 7: SMS notification
 function sendSmsNotification(user: User, order: Order): void {
-  if (user.subscriptionLevel === 'premium' || user.subscriptionLevel === 'enterprise') {
+  if (
+    user.subscriptionLevel === "premium" ||
+    user.subscriptionLevel === "enterprise"
+  ) {
     const smsMessage = `Order confirmed! Total: $${order.totalAmount.toFixed(2)}`;
     console.log(`[SMS] Message: ${smsMessage}`);
   }
@@ -98,7 +110,9 @@ function sendSmsNotification(user: User, order: Order): void {
 
 // ✅ RESPONSIBILITY 8: Analytics logging
 function logOrderAnalytics(user: User, order: Order): void {
-  console.log(`[ANALYTICS] User ${user.id} placed order with total $${order.totalAmount}`);
+  console.log(
+    `[ANALYTICS] User ${user.id} placed order with total $${order.totalAmount}`,
+  );
 }
 
 // ✅ RESPONSIBILITY 9: User state update
@@ -108,7 +122,10 @@ function updateUserLastLogin(user: User): void {
 
 // ✅ ORCHESTRATOR: Coordinates all responsibilities
 // This function is now small, readable, and easy to test
-function processUserOrderAndSendNotification(user: User, products: Product[]): Order {
+function processUserOrderAndSendNotification(
+  user: User,
+  products: Product[],
+): Order {
   validateUser(user);
   validateProducts(products);
 

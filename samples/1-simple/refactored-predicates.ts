@@ -11,19 +11,18 @@ interface Item {
 // ✅ PREDICATE FUNCTIONS: Each one has a clear, intention-revealing name
 
 function isAgedBrie(item: Item): boolean {
-  return item.name === 'Aged Brie';
+  return item.name === "Aged Brie";
 }
 
 function isBackstagePass(item: Item): boolean {
-  return item.name === 'Backstage passes to a TAFKAL80ETC concert';
+  return item.name === "Backstage passes to a TAFKAL80ETC concert";
 }
 
 function isSulfuras(item: Item): boolean {
-  return item.name === 'Sulfuras, Hand of Ragnaros';
+  return item.name === "Sulfuras, Hand of Ragnaros";
 }
 
 function isSpecialItem(item: Item): boolean {
-
   return isAgedBrie(item) || isBackstagePass(item) || isSulfuras(item);
 }
 
@@ -39,8 +38,6 @@ function hasExpired(item: Item): boolean {
   return item.sellIn < 0;
 }
 
-
-
 // ✅ BUSINESS RULE PREDICATES: Combine simple predicates into meaningful rules
 
 function shouldDecreaseQuality(item: Item): boolean {
@@ -53,12 +50,18 @@ function shouldDecreaseQuality(item: Item): boolean {
 function shouldIncreaseQuality(item: Item): boolean {
   // Aged Brie and Backstage passes increase in quality
   // But only if quality hasn't reached max
-  return (isAgedBrie(item) || isBackstagePass(item)) && hasQualityToIncrease(item);
+  return (
+    (isAgedBrie(item) || isBackstagePass(item)) && hasQualityToIncrease(item)
+  );
 }
 
 function shouldIncreaseQualityMoreRapidly(item: Item): boolean {
   // Backstage passes increase more rapidly as the concert approaches
-  return isBackstagePass(item) && (hasExpired(item) === false) && hasQualityToIncrease(item);
+  return (
+    isBackstagePass(item) &&
+    hasExpired(item) === false &&
+    hasQualityToIncrease(item)
+  );
   //TODO find something to refactor here
 }
 
